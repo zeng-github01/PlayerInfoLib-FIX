@@ -411,6 +411,7 @@ namespace PlayerInfoLibrary
             MySqlDataReader reader = null;
             totalRecods = 0;
             uint limitStart = (page - 1) * limit;
+            MySqlCommand command = Connection.CreateCommand();
             try
             {
                 if (!Initialized)
@@ -429,7 +430,6 @@ namespace PlayerInfoLibrary
                     return playerList;
                 }
 
-                MySqlCommand command = Connection.CreateCommand();
                 command.Parameters.AddWithValue("@name", "%" + playerName + "%");
                 command.Parameters.AddWithValue("@instance", InstanceID);
                 string type;
@@ -452,8 +452,8 @@ namespace PlayerInfoLibrary
                         break;
                 }
                 if (pagination)
-                    command.CommandText = "SELECT IFNULL(Count(a.steamid),0) AS count FROM  `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid  WHERE  ( b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL )  " + type + " GROUP BY a.steamid";
-                command.CommandText += "SELECT a.steamid, a.steamname, a.charname, a.ip, a.lastloginglobal, a.totalplaytime, a.lastserverid, b.serverid, b.lastloginlocal, b.cleanedbuildables, b.cleanedplayerdata, c.servername AS LastServerName FROM `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid LEFT JOIN `" + TableInstance + "` AS c ON a.lastserverid = c.serverid WHERE (b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL ) AND ( a.steamname LIKE @name OR a.charname LIKE @name ) ORDER  BY a.lastloginglobal DESC LIMIT  0, 10; ";
+                    command.CommandText = "SELECT IFNULL(Count(a.steamid),0) AS count FROM  `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid  WHERE  ( b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL )  " + type + " GROUP BY a.steamid;";
+                command.CommandText += "SELECT a.steamid, a.steamname, a.charname, a.ip, a.lastloginglobal, a.totalplaytime, a.lastserverid, b.serverid, b.lastloginlocal, b.cleanedbuildables, b.cleanedplayerdata, c.servername AS LastServerName FROM `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid LEFT JOIN `" + TableInstance + "` AS c ON a.lastserverid = c.serverid WHERE (b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL ) " + type + " ORDER BY a.lastloginglobal DESC LIMIT  0, 10; ";
                 reader = command.ExecuteReader();
                 if (pagination)
                 {
@@ -480,7 +480,7 @@ namespace PlayerInfoLibrary
             }
             catch (MySqlException ex)
             {
-                HandleException(ex);
+                HandleException(ex, "Failed to execute: "+ command.CommandText);
             }
             finally
             {
