@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PlayerInfoLib</RootNamespace>
     <AssemblyName>PlayerInfoLib</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -73,6 +73,10 @@
       <HintPath>lib\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandDelInstance.cs" />
@@ -94,12 +98,6 @@
     <Content Include="lib\Rocket.Core.dll" />
     <Content Include="lib\Rocket.Unturned.dll" />
     <Content Include="lib\UnityEngine.dll" />
-    <Content Include="Libraries\I18N.dll" />
-    <Content Include="Libraries\I18N.West.dll" />
-    <Content Include="Libraries\MySql.Data.dll" />
-    <Content Include="Libraries\System.Data.dll" />
-    <Content Include="Libraries\System.Management.dll" />
-    <Content Include="Libraries\System.Transactions.dll" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Libraries\I18N.dll">
@@ -123,7 +121,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)$(OutDir)$(TargetFileName)" "$(ProjectDir)..\Rocket_Ref\PInfoLib\$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -452,8 +452,8 @@ namespace PlayerInfoLibrary
                         break;
                 }
                 if (pagination)
-                    command.CommandText = "SELECT COUNT(*) AS count FROM (SELECT * FROM (SELECT a.SteamID FROM `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.SteamID = b.SteamID WHERE (b.ServerID = @instance OR b.ServerID = a.LastServerID OR b.ServerID IS NULL) " + type + " ORDER BY b.LastLoginLocal ASC) AS g GROUP BY g.SteamID) AS c;";
-                command.CommandText += "SELECT * FROM (SELECT a.SteamID, a.SteamName, a.CharName, a.IP, a.LastLoginGlobal, a.TotalPlayTime, a.LastServerID, b.ServerID, b.LastLoginLocal, b.CleanedBuildables, b.CleanedPlayerData, c.ServerName AS LastServerName FROM `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.SteamID = b.SteamID LEFT JOIN `" + TableInstance + "` AS c ON a.LastServerID = c.ServerID WHERE (b.ServerID = @instance OR b.ServerID = a.LastServerID OR b.ServerID IS NULL) " + type + " ORDER BY b.LastLoginLocal ASC) AS g GROUP BY g.SteamID ORDER BY g.LastLoginGlobal DESC" + (pagination ? " LIMIT " + limitStart + ", " + limit + ";" : ";");
+                    command.CommandText = "SELECT IFNULL(Count(a.steamid),0) AS count FROM  `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid  WHERE  ( b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL )  " + type + " GROUP BY a.steamid";
+                command.CommandText += "SELECT a.steamid, a.steamname, a.charname, a.ip, a.lastloginglobal, a.totalplaytime, a.lastserverid, b.serverid, b.lastloginlocal, b.cleanedbuildables, b.cleanedplayerdata, c.servername AS LastServerName FROM `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid LEFT JOIN `" + TableInstance + "` AS c ON a.lastserverid = c.serverid WHERE (b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL ) AND ( a.steamname LIKE @name OR a.charname LIKE @name ) ORDER  BY a.lastloginglobal DESC LIMIT  0, 10; ";
                 reader = command.ExecuteReader();
                 if (pagination)
                 {
