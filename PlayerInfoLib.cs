@@ -59,7 +59,7 @@ namespace PlayerInfoLibrary
             PlayerData pData = Database.QueryById(player.CSteamID, false);
             int totalTime = pData.TotalPlayime;
             DateTime loginTime = PlayerInfoLib.LoginTime[player.CSteamID];
-            pData = new PlayerData(player.CSteamID, player.SteamName, player.CharacterName, player.CSteamID.GetIP(), loginTime, Database.InstanceID, Provider.serverName, Database.InstanceID, loginTime, false, false, totalTime);
+            pData = new PlayerData(player.CSteamID, player.SteamName, player.CharacterName, player.CSteamID.GetIP(), player.CSteamID.GetHWID() ,loginTime, Database.InstanceID, Provider.serverName, Database.InstanceID, loginTime, false, false, totalTime);
             Database.SaveToDB(pData);
             // Recheck the ip address in the component, the ip isn't always fully set by the time this event is called.
             PlayerInfoLibPComponent pc = player.GetComponent<PlayerInfoLibPComponent>();

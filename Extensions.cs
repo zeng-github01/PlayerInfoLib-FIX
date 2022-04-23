@@ -2,6 +2,8 @@
 using SDG.Unturned;
 using Steamworks;
 using System;
+//using SDG.NetTransport;
+using Rocket.Unturned.Player;
 
 namespace PlayerInfoLibrary
 {
@@ -25,9 +27,16 @@ namespace PlayerInfoLibrary
         public static string GetIP(this CSteamID cSteamID)
         {
             // Grab an active players ip address from CSteamID.
-            P2PSessionState_t sessionState;
-            SteamGameServerNetworking.GetP2PSessionState(cSteamID, out sessionState);
-            return Parser.getIPFromUInt32(sessionState.m_nRemoteIP);
+            //P2PSessionState_t sessionState;
+            //SteamGameServerNetworking.GetP2PSessionState(cSteamID, out sessionState);
+            //return Parser.getIPFromUInt32(sessionState.m_nRemoteIP);
+            var Ip = UnturnedPlayer.FromCSteamID(cSteamID).Player.channel.owner.getIPv4AddressOrZero();
+            return Parser.getIPFromUInt32(Ip);
+        }
+        public static string GetHWID(this CSteamID cSteamID)
+        {
+            var hwid = UnturnedPlayer.FromCSteamID(cSteamID).Player.channel.owner.playerID.hwid;
+            return string.Join("", hwid);
         }
 
         // Returns a Steamworks.CSteamID on out from a string, and returns true if it is a CSteamID.

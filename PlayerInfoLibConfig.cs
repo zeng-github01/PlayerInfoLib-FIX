@@ -4,7 +4,7 @@ namespace PlayerInfoLibrary
 {
     public class PlayerInfoLibConfig : IRocketPluginConfiguration
     {
-        public string DatabaseAddress = "localhost";
+        public string DatabaseAddress = "127.0.0.1";
         public ushort DatabasePort = 3306;
         public string DatabaseUserName = "unturned";
         public string DatabasePassword = "password";
