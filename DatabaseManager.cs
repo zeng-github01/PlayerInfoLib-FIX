@@ -455,13 +455,16 @@ namespace PlayerInfoLibrary
                     case QueryType.IP:
                         type = "AND a.IP = " + Parser.getUInt32FromIP(playerName);
                         break;
+                    case QueryType.HWID:
+                        type = "AND a.HWID LIKE @name";
+                        break;
                     default:
                         type = string.Empty;
                         break;
                 }
                 if (pagination)
                     command.CommandText = "SELECT IFNULL(Count(a.steamid),0) AS count FROM  `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid  WHERE  ( b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL )  " + type + " GROUP BY a.steamid;";
-                command.CommandText += "SELECT a.steamid, a.steamname, a.charname, a.ip, a.lastloginglobal, a.totalplaytime, a.lastserverid, b.serverid, b.lastloginlocal, b.cleanedbuildables, b.cleanedplayerdata, c.servername AS LastServerName FROM `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid LEFT JOIN `" + TableInstance + "` AS c ON a.lastserverid = c.serverid WHERE (b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL ) " + type + " ORDER BY a.lastloginglobal DESC LIMIT  0, 10; ";
+                command.CommandText += "SELECT a.steamid, a.steamname, a.charname, a.ip, a.hwid, a.lastloginglobal, a.totalplaytime, a.lastserverid, b.serverid, b.lastloginlocal, b.cleanedbuildables, b.cleanedplayerdata, c.servername AS LastServerName FROM `" + Table + "` AS a LEFT JOIN `" + TableServer + "` AS b ON a.steamid = b.steamid LEFT JOIN `" + TableInstance + "` AS c ON a.lastserverid = c.serverid WHERE (b.serverid = @instance OR b.serverid = a.lastserverid OR b.serverid IS NULL ) " + type + " ORDER BY a.lastloginglobal DESC LIMIT  0, 10; ";
                 reader = command.ExecuteReader();
                 if (pagination)
                 {
@@ -805,6 +808,7 @@ namespace PlayerInfoLibrary
         CharName,
         Both,
         IP,
+        HWID,
     }
 
     public enum OptionType

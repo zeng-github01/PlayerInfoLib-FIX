@@ -30,13 +30,17 @@ namespace PlayerInfoLibrary
             //P2PSessionState_t sessionState;
             //SteamGameServerNetworking.GetP2PSessionState(cSteamID, out sessionState);
             //return Parser.getIPFromUInt32(sessionState.m_nRemoteIP);
-            var Ip = UnturnedPlayer.FromCSteamID(cSteamID).Player.channel.owner.getIPv4AddressOrZero();
-            return Parser.getIPFromUInt32(Ip);
+            //SteamGameServerNetworking.GetP2PSessionState(cSteamID, out P2PSessionState_t p2PSessionState_T);
+            var player = UnturnedPlayer.FromCSteamID(cSteamID);
+            var IP = player.Player.channel.owner.getIPv4AddressOrZero();
+            return Parser.getIPFromUInt32(IP);
         }
         public static string GetHWID(this CSteamID cSteamID)
         {
-            var hwid = UnturnedPlayer.FromCSteamID(cSteamID).Player.channel.owner.playerID.hwid;
-            return string.Join("", hwid);
+            var player = UnturnedPlayer.FromCSteamID(cSteamID);
+            var hwid = player.Player.channel.owner.playerID.GetHwids().GetEnumerator();
+            hwid.MoveNext();
+            return string.Join("", hwid.Current);
         }
 
         // Returns a Steamworks.CSteamID on out from a string, and returns true if it is a CSteamID.
