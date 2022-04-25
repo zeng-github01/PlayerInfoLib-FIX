@@ -43,6 +43,9 @@
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>lib\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
+    <Reference Include="GlobalBan">
+      <HintPath>lib\GlobalBan.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.14.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>packages\Google.Protobuf.3.14.0\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
