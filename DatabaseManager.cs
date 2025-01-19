@@ -1,12 +1,13 @@
 ﻿using Google.Protobuf;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Rocket.Core.Logging;
+using SDG.Framework.IO.Deserialization;
 using SDG.Unturned;
 using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 
 namespace PlayerInfoLibrary
 {
@@ -609,7 +610,7 @@ namespace PlayerInfoLibrary
 
         private PlayerData BuildPlayerData(MySqlDataReader reader)
         {
-            return new PlayerData((CSteamID)reader.GetUInt64("SteamID"), reader.GetString("SteamName"), reader.GetString("CharName"), Parser.getIPFromUInt32(reader.GetUInt32("IP")), JsonSerializer.Deserialize<List<string>>(reader.GetString("HWID")), reader.GetInt64("LastLoginGlobal").FromTimeStamp(), reader.GetUInt16("LastServerID"), !reader.IsDBNull("LastServerName") ? reader.GetString("LastServerName") : string.Empty, !reader.IsDBNull("ServerID") ? reader.GetUInt16("ServerID") : (ushort)0, !reader.IsDBNull("LastLoginLocal") ? reader.GetInt64("LastLoginLocal").FromTimeStamp() : (0L).FromTimeStamp(), !reader.IsDBNull("CleanedBuildables") ? reader.GetBoolean("CleanedBuildables") : false, !reader.IsDBNull("CleanedPlayerData") ? reader.GetBoolean("CleanedPlayerData") : false, reader.GetInt32("TotalPlayTime"));
+            return new PlayerData((CSteamID)reader.GetUInt64("SteamID"), reader.GetString("SteamName"), reader.GetString("CharName"), Parser.getIPFromUInt32(reader.GetUInt32("IP")), JsonConvert.DeserializeObject<List<string>>(reader.GetString("HWID")), reader.GetInt64("LastLoginGlobal").FromTimeStamp(), reader.GetUInt16("LastServerID"), !reader.IsDBNull("LastServerName") ? reader.GetString("LastServerName") : string.Empty, !reader.IsDBNull("ServerID") ? reader.GetUInt16("ServerID") : (ushort)0, !reader.IsDBNull("LastLoginLocal") ? reader.GetInt64("LastLoginLocal").FromTimeStamp() : (0L).FromTimeStamp(), !reader.IsDBNull("CleanedBuildables") ? reader.GetBoolean("CleanedBuildables") : false, !reader.IsDBNull("CleanedPlayerData") ? reader.GetBoolean("CleanedPlayerData") : false, reader.GetInt32("TotalPlayTime"));
         }
 
         // Cleanup section.
@@ -787,7 +788,7 @@ namespace PlayerInfoLibrary
                 command.Parameters.AddWithValue("@steamname", pdata.SteamName.Truncate(200));
                 command.Parameters.AddWithValue("@charname", pdata.CharacterName.Truncate(200));
                 command.Parameters.AddWithValue("@ip", Parser.getUInt32FromIP(pdata.IP));
-                command.Parameters.AddWithValue("@hwid", JsonSerializer.Serialize(pdata.HWID));
+                command.Parameters.AddWithValue("@hwid", JsonConvert.SerializeObject(pdata.HWID));
                 command.Parameters.AddWithValue("@instanceid", pdata.ServerID);
                 command.Parameters.AddWithValue("@lastinstanceid", pdata.LastServerID);
                 command.Parameters.AddWithValue("@lastloginglobal", pdata.LastLoginGlobal.ToTimeStamp());
