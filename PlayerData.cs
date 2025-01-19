@@ -2,6 +2,7 @@
 using Rocket.Core;
 using Steamworks;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlayerInfoLibrary
@@ -12,7 +13,7 @@ namespace PlayerInfoLibrary
         public string SteamName { get; internal set; }
         public string CharacterName { get; internal set; }
         public string IP { get; internal set; }
-        public string HWID { get; internal set; }
+        public List<string> HWID { get; internal set; }
         public DateTime LastLoginGlobal { get; internal set; }
         public int TotalPlayime { get; internal set; }
         public ushort LastServerID { get; internal set; }
@@ -70,7 +71,7 @@ namespace PlayerInfoLibrary
             SteamID = CSteamID.Nil;
             TotalPlayime = 0;
         }
-        internal PlayerData(CSteamID steamID, string steamName, string characterName, string ip,string Hwid, DateTime lastLoginGlobal, ushort lastServerID, string lastServerName, ushort serverID, DateTime lastLoginLocal, bool cleanedBuildables, bool cleanedPlayerData, int totalPlayTime)
+        internal PlayerData(CSteamID steamID, string steamName, string characterName, string ip, List<string> Hwid, DateTime lastLoginGlobal, ushort lastServerID, string lastServerName, ushort serverID, DateTime lastLoginLocal, bool cleanedBuildables, bool cleanedPlayerData, int totalPlayTime)
         {
             SteamID = steamID;
             SteamName = steamName;

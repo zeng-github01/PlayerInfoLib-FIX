@@ -4,6 +4,8 @@ using Steamworks;
 using System;
 //using SDG.NetTransport;
 using Rocket.Unturned.Player;
+using System.Text;
+using System.Collections.Generic;
 
 namespace PlayerInfoLibrary
 {
@@ -35,12 +37,17 @@ namespace PlayerInfoLibrary
             var IP = player.Player.channel.owner.getIPv4AddressOrZero();
             return Parser.getIPFromUInt32(IP);
         }
-        public static string GetHWID(this CSteamID cSteamID)
+        public static List<string> GetHWID(this CSteamID cSteamID)
         {
+            List<string> hwidList = new List<string>();
             var player = UnturnedPlayer.FromCSteamID(cSteamID);
             var hwid = player.Player.channel.owner.playerID.GetHwids().GetEnumerator();
-            hwid.MoveNext();
-            return string.Join("", hwid.Current);
+            while (hwid.MoveNext())
+            {
+                hwidList.Add(Convert.ToBase64String(hwid.Current));
+            }
+
+            return hwidList;
         }
 
         // Returns a Steamworks.CSteamID on out from a string, and returns true if it is a CSteamID.

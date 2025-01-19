@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Rocket.API.Collections;
 using Rocket.API;
-using GlobalBan;
 
 namespace PlayerInfoLibrary
 {
@@ -24,9 +23,8 @@ namespace PlayerInfoLibrary
         {
             Instance = this;
             Database = new DatabaseManager();
-            U.Events.OnPlayerConnected += Events_OnPlayerConnected;
             U.Events.OnPlayerDisconnected += Events_OnPlayerDisconnected;
-            //U.Events.OnBeforePlayerConnected += Events_OnBeforePlayerConnected;
+            U.Events.OnBeforePlayerConnected += Events_OnBeforePlayerConnected;
             if (Instance.Configuration.Instance.KeepaliveInterval <= 0)
             {
                 Logger.LogWarning("Error: Keep alive config option must be above 0.");
@@ -48,9 +46,8 @@ namespace PlayerInfoLibrary
 
         protected override void Unload()
         {
-            U.Events.OnPlayerConnected -= Events_OnPlayerConnected;
             U.Events.OnPlayerDisconnected -= Events_OnPlayerDisconnected;
-            //U.Events.OnBeforePlayerConnected -= Events_OnBeforePlayerConnected;
+            U.Events.OnBeforePlayerConnected -= Events_OnBeforePlayerConnected;
 
             Database.Unload();
             Database = null;
@@ -79,40 +76,6 @@ namespace PlayerInfoLibrary
             {
                 
             }
-        }
-
-        private void Events_OnPlayerConnected(UnturnedPlayer player)
-        {
-            if (player != null)
-            {
-                if (LoginTime.ContainsKey(player.CSteamID))
-                    LoginTime.Remove(player.CSteamID);
-                LoginTime.Add(player.CSteamID, DateTime.Now);
-                PlayerData pData = Database.QueryById(player.CSteamID, false);
-                int totalTime = pData.TotalPlayime;
-                DateTime loginTime = PlayerInfoLib.LoginTime[player.CSteamID];
-                pData = new PlayerData(player.CSteamID, player.SteamName, player.CharacterName, player.CSteamID.GetIP(), player.CSteamID.GetHWID(), loginTime, Database.InstanceID, Provider.serverName, Database.InstanceID, loginTime, false, false, totalTime);
-                Database.SaveToDB(pData);
-                // Recheck the ip address in the component, the ip isn't always fully set by the time this event is called.
-                PlayerInfoLibPComponent pc = player.GetComponent<PlayerInfoLibPComponent>();
-                pc.Start(pData);
-            }
-
-            PlayerInfoLib.ExecuteDependencyCode("GlobalBan", (IRocketPlugin plugin) =>
-             {
-                 if (GlobalBan.GlobalBan.Instance.State == PluginState.Loaded)
-                 {
-                     if (GlobalBan.GlobalBan.CheckIfBanned(player))
-                     {
-                         if (GlobalBan.GlobalBan.Instance.BannedReason.TryGetValue(player, out string reason))
-                         {
-                             Provider.kick(player.CSteamID, reason);
-                             GlobalBan.GlobalBan.Instance.BannedReason.Remove(player);
-
-                         }
-                     }
-                 }
-             });
         }
 
         private void Events_OnPlayerDisconnected(UnturnedPlayer player)
